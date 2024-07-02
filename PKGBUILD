@@ -2,7 +2,7 @@
 
 pkgbase=linux-rust
 pkgver=6.9.7.arch1
-pkgrel=1
+pkgrel=2
 pkgdesc='Rust Linux'
 url='https://github.com/archlinux/linux'
 arch=(x86_64)
@@ -78,6 +78,9 @@ prepare() {
 
   echo "Installing rust-bindgen"
   cargo install --locked --version 0.65.1 bindgen-cli
+
+  echo "Verifying that Rust support is available"
+  make LLVM=1 rustavailable
 
   echo "Setting config..."
   cp ../config .config
