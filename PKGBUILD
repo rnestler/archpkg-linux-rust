@@ -4,7 +4,7 @@ pkgbase=linux-rust
 pkgver=6.10.10.arch1
 pkgrel=1
 pkgdesc='Rust Linux'
-url='https://github.com/archlinux/linux'
+url='https://github.com/rnestler/archpkg-linux-rust'
 arch=(x86_64)
 license=(GPL2)
 makedepends=(
@@ -33,7 +33,7 @@ _srcname=linux-${pkgver%.*}
 _srctag=v${pkgver%.*}-${pkgver##*.}
 source=(
   https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.{xz,sign}
-  $url/releases/download/$_srctag/linux-$_srctag.patch.zst{,.sig}
+  https://github.com/archlinux/linux/releases/download/$_srctag/linux-$_srctag.patch.zst{,.sig}
   config  # the main kernel config file
 )
 validpgpkeys=(
