@@ -1,7 +1,7 @@
 # Maintainer: Raphael Nestler (rnestler) <raphael.nestler@gmail.com>
 
 pkgbase=linux-rust
-pkgver=6.10.10.arch1
+pkgver=6.11.9.arch1
 pkgrel=1
 pkgdesc='Rust Linux'
 url='https://github.com/rnestler/archpkg-linux-rust'
@@ -42,14 +42,14 @@ validpgpkeys=(
   83BC8889351B5DEBBB68416EB8AC08600F108CDF  # Jan Alexander Steffens (heftig)
 )
 # https://www.kernel.org/pub/linux/kernel/v6.x/sha256sums.asc
-sha256sums=('e687e735b5eb9efb6d67b42433c93fc9118106a995514f062652873b5e809bcd'
+sha256sums=('75658a7aa3bd9598c96ee1e5862c5e1d34fced75c28d825c727a1510a6f384b4'
             'SKIP'
-            '064b9841dd6738e8a6f8859743c66e0d603541b6afa021ab98ea7e3623fca108'
+            '8538475bdb3b4684082217a9282d8d149538b6b6e5a6b3b5efa12217ae1f69a6'
             'SKIP'
             'e7a42100a4cb9c5999c3c8ec5dd2c88f6bda48b7cdd6181f36439f2d013edeee')
-b2sums=('8a15910089d080886046b1fd8d57ef28ce872bf428e67ccbc9d5ca92da794d6dee7ab83cc914a499b40962e2990c3b1e5b11ae7d12c1eff7bec548c9a67df03a'
+b2sums=('97787b71bcf6a57872078e46917b3b6e339f25a0320dabe226fe5fe91e3eb829e3749b096eec4525fd1d6f25805f54f8a2d2b71a41bc94fd35c2b9c9140f25d7'
         'SKIP'
-        '06b8f21c167f3376a62f9bd0d3e0275a4ba32736aaa5d7fb94a07e99445186ab8f9426468d33c00fd43c52c52ffdb3ee77e6802db0781ffad6b8d74cdc4951a1'
+        'd90b8cadee652e79a57011e26585d57a1ddb1b8f0a3a58ff09383cc20d048a3545fdd7bc4569008fbb002acf1ffebd8261f540f848735550d81f538d7b2b030d'
         'SKIP'
         'fe0e3040d026e8f218e606b022bf1ce2c4a1d38cd9780fcd6eaefaadee7cba8dd6bc6bc9af4becb598a04b53183066e8c6428e782081a98526f19a93899008d1')
 
