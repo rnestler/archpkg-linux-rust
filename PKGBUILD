@@ -18,6 +18,7 @@ makedepends=(
   perl
   python
   rustup
+  rust-bindgen
   tar
   xz
 
@@ -76,9 +77,6 @@ prepare() {
 
   echo "Installing rust-src"
   rustup component add rust-src
-
-  echo "Installing rust-bindgen"
-  cargo install --locked --version 0.65.1 bindgen-cli
 
   echo "Verifying that Rust support is available"
   make LLVM=1 rustavailable
