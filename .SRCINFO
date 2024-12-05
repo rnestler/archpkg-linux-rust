@@ -15,6 +15,7 @@ pkgbase = linux-rust
 	makedepends = perl
 	makedepends = python
 	makedepends = rustup
+	makedepends = rust-bindgen
 	makedepends = tar
 	makedepends = xz
 	makedepends = graphviz
