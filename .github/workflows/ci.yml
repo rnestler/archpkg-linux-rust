@@ -5,7 +5,7 @@ jobs:
   makepkg:
     runs-on: ubuntu-22.04
     container:
-      image: rnestler/archlinux-rust:add-a-builder-user
+      image: rnestler/archlinux-rust:1.83.0
     steps:
       - run: pacman -Syu --noconfirm
       - run: pacman -S --noconfirm base-devel
