@@ -5,9 +5,9 @@ jobs:
   makepkg:
     runs-on: ubuntu-22.04
     container:
-      image: rnestler/archlinux-rust
-      options: --user 1001
+      image: rnestler/archlinux-rust:add-a-builder-user
     steps:
-      - run: sudo pacman -Syu
+      - run: pacman -Syu
       - uses: actions/checkout@v3
-      - run: makepkg --nobuild
+      - run: chown --recursive builder .
+      - run: sudo --user=builder makepkg --nobuild
