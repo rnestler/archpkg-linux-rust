@@ -8,6 +8,7 @@ jobs:
       image: rnestler/archlinux-rust:add-a-builder-user
     steps:
       - run: pacman -Syu --noconfirm
+      - run: pacman -S --noconfirm base-devel
       - uses: actions/checkout@v3
       - run: chown --recursive builder .
       - run: sudo --user=builder gpg --import keys/*.asc
