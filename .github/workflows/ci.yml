@@ -10,4 +10,5 @@ jobs:
       - run: pacman -Syu --noconfirm
       - uses: actions/checkout@v3
       - run: chown --recursive builder .
+      - run: sudo --user=builder gpg --import keys/*.asc
       - run: sudo --user=builder makepkg --noconfirm -s --nobuild
