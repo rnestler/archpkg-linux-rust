@@ -4,7 +4,9 @@ on: [push]
 jobs:
   makepkg:
     runs-on: ubuntu-22.04
-    container: rnestler/archlinux-rust:add-a-builder-user
+    container:
+      image: rnestler/archlinux-rust
+      options: --user 1001
     steps:
       - uses: actions/checkout@v3
       - run: makepkg --nobuild
