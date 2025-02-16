@@ -36,6 +36,7 @@ source=(
   https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.{xz,sign}
   https://github.com/archlinux/linux/releases/download/$_srctag/linux-$_srctag.patch.zst{,.sig}
   config  # the main kernel config file
+  rust-toolchain
 )
 validpgpkeys=(
   ABAF11C65A2970B130ABE3C479BE3E4300411886  # Linus Torvalds
@@ -47,12 +48,14 @@ sha256sums=('87be0360df0931b340d2bac35161a548070fbc3a8c352c49e21e96666c26aeb4'
             'SKIP'
             'f57e541d26eb3971b3e587d418825c50612d75684f5ad6dd36b8084846751b5a'
             'SKIP'
-            '494f9b61b4893afa086d29657b1fa84948e0798217193c264055a68c7fae3380')
+            '494f9b61b4893afa086d29657b1fa84948e0798217193c264055a68c7fae3380'
+            '9cbdfdb58bcc5bbe0b6c578e62775f3d11d323ee711fa79eccdc0ac463776c1d')
 b2sums=('2584e35822a429b6825bf8d99c073848d5ba83d45b382ab82d1caa36ccbf2529036b31d4687dafb29650c87f4b63489caa2cb67a85d05183c572dcad75a35ba8'
         'SKIP'
         '195386c83893d88d4198ddd208f4c71e1264d8f48aef50006e42581cdf6ebe441ca67a9b93bf7ed84b7580dd0b591a3ef7a06d7ee4d6ffef8486fa4962220214'
         'SKIP'
-        'cb50013dc3a66c66a81bcd04b32fc627ed2166d45820ba45a9f0389416fb3e73eb425c2b1e4f135e22d9f68d089dcd8ed367d1880e0b173cf3e0e1255cb12282')
+        'cb50013dc3a66c66a81bcd04b32fc627ed2166d45820ba45a9f0389416fb3e73eb425c2b1e4f135e22d9f68d089dcd8ed367d1880e0b173cf3e0e1255cb12282'
+        '731c8a43afaa9597af54611925431341f9bc1369981c0ffc455f21270ee5cd6a7de16d67d293925598ae5ca451ff425b69562b8635940fbcfa1877049b9eecb5')
 
 export KBUILD_BUILD_HOST=archlinux
 export KBUILD_BUILD_USER=$pkgbase
@@ -200,7 +203,7 @@ _package-headers() {
   install -Dt "$builddir/rust" -m644 scripts/target.json
   install -Dt "$builddir/rust" -m644 rust/*.rmeta
   install -Dt "$builddir/rust" -m644 rust/*.so
-  install -Dt "$builddir" -m644 ../../rust-toolchain
+  install -Dt "$builddir" -m644 ../rust-toolchain
 
   echo "Stripping build tools..."
   local file
