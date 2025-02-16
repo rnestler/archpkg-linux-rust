@@ -17,7 +17,8 @@ makedepends=(
   pahole
   perl
   python
-  rustup
+  rust
+  rust-src
   rust-bindgen
   tar
   xz
@@ -78,8 +79,10 @@ prepare() {
     patch -Np1 < "../$src"
   done
 
-  echo "Installing rust-src"
-  rustup component add rust-src
+  if rustup --help >/dev/null 2>&1; then
+    echo "Installing rust-src"
+    rustup component add rust-src
+  fi
 
   echo "Verifying that Rust support is available"
   make LLVM=1 rustavailable
