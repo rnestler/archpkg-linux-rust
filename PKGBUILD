@@ -78,7 +78,15 @@ prepare() {
   done
 
   echo "Verifying that Rust support is available"
-  make LLVM=1 rustavailable
+  make LLVM=1 rustavailable || printf '%s\n' \
+    'Checking for rust support failed!' \
+    'Make sure that either:' \
+    '   rust and rust-src are installed' \
+    'or' \
+    '   rustup is installed, and you have run:' \
+    '   "rustup component add rust-src"' \
+    '   and e.g. "rustup default stable"'; \
+    exit 1
 
   echo "Setting config..."
   cp ../config .config
