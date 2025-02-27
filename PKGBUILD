@@ -1,12 +1,12 @@
 # Maintainer: Raphael Nestler (rnestler) <raphael.nestler@gmail.com>
 
 pkgbase=linux-rust
-pkgver=6.12.9.arch1
-pkgrel=2
+pkgver=6.13.5.arch1
+pkgrel=1
 pkgdesc='Rust Linux'
 url='https://github.com/rnestler/archpkg-linux-rust'
 arch=(x86_64)
-license=(GPL2)
+license=(GPL-2.0-only)
 makedepends=(
   bc
   cpio
@@ -18,8 +18,8 @@ makedepends=(
   perl
   python
   rust
-  rust-src
   rust-bindgen
+  rust-src
   tar
   xz
 
@@ -34,7 +34,6 @@ options=(
   !debug
   !strip
 )
-
 _srcname=linux-${pkgver%.*}
 _srctag=v${pkgver%.*}-${pkgver##*.}
 source=(
@@ -48,16 +47,16 @@ validpgpkeys=(
   83BC8889351B5DEBBB68416EB8AC08600F108CDF  # Jan Alexander Steffens (heftig)
 )
 # https://www.kernel.org/pub/linux/kernel/v6.x/sha256sums.asc
-sha256sums=('87be0360df0931b340d2bac35161a548070fbc3a8c352c49e21e96666c26aeb4'
+sha256sums=('283ecb0784f3fbc16dd822fb1d9642e230ec7515ed33f120e551b839f355e6e2'
             'SKIP'
-            'f57e541d26eb3971b3e587d418825c50612d75684f5ad6dd36b8084846751b5a'
+            '353ecb6bd29beb8998af1e6b04c4184836e0a2ec0a0115d2902697ad99ac6749'
             'SKIP'
-            '494f9b61b4893afa086d29657b1fa84948e0798217193c264055a68c7fae3380')
-b2sums=('2584e35822a429b6825bf8d99c073848d5ba83d45b382ab82d1caa36ccbf2529036b31d4687dafb29650c87f4b63489caa2cb67a85d05183c572dcad75a35ba8'
+            'ee19355837c05ba1311a693d2c3b0ca817a26683378f2fea2050a5e7ea4b1263')
+b2sums=('f8d57680d657c57bfc02a7981133e1e0dff9718f9ffdaff99be89861582cc8922884a4c8ce76acf8cc97bf407dc77b91d6c0d0cab59b210d5fa485d27eac1999'
         'SKIP'
-        '195386c83893d88d4198ddd208f4c71e1264d8f48aef50006e42581cdf6ebe441ca67a9b93bf7ed84b7580dd0b591a3ef7a06d7ee4d6ffef8486fa4962220214'
+        '4f1fd3abdff849efa49c1a2dc4e5206f99ce4e3c85a3cc31c68fce9d0f672ff2c0c60343036c37e80c203c75ef77b0c381b820a8786bf14391cfd6b1bf5b611d'
         'SKIP'
-        'cb50013dc3a66c66a81bcd04b32fc627ed2166d45820ba45a9f0389416fb3e73eb425c2b1e4f135e22d9f68d089dcd8ed367d1880e0b173cf3e0e1255cb12282')
+        '51b3bfba295bf0ed929c81d6830f52ca6b7df6342e0d946699041e9fb09b5d9ca110a74baa0d74db342803b7280ecd8fd96483c1021d67c0ebcf57aaefe9cb8b')
 
 export KBUILD_BUILD_HOST=archlinux
 export KBUILD_BUILD_USER=$pkgbase
@@ -108,6 +107,7 @@ prepare() {
 build() {
   cd $_srcname
   make LLVM=1 all
+  make LLVM=1 -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
   make LLVM=1 htmldocs
 }
 
@@ -119,8 +119,9 @@ _package() {
     kmod
   )
   optdepends=(
-    'wireless-regdb: to set the correct wireless channels of your country'
     'linux-firmware: firmware images needed for some devices'
+    'scx-scheds: to use sched-ext schedulers'
+    'wireless-regdb: to set the correct wireless channels of your country'
   )
   provides=(
     KSMBD-MODULE
@@ -160,10 +161,11 @@ _package-headers() {
 
   echo "Installing build files..."
   install -Dt "$builddir" -m644 .config Makefile Module.symvers System.map \
-    localversion.* version vmlinux
+    localversion.* version vmlinux tools/bpf/bpftool/vmlinux.h
   install -Dt "$builddir/kernel" -m644 kernel/Makefile
   install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
   cp -t "$builddir" -a scripts
+  ln -srt "$builddir" "$builddir/scripts/gdb/vmlinux-gdb.py"
 
   # required when STACK_VALIDATION is enabled
   install -Dt "$builddir/tools/objtool" tools/objtool/objtool
