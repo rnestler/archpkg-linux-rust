@@ -6,7 +6,7 @@ pkgrel=1
 pkgdesc='Rust Linux'
 url='https://github.com/rnestler/archpkg-linux-rust'
 arch=(x86_64)
-license=(GPL2)
+license=(GPL-2.0-only)
 makedepends=(
   bc
   cpio
@@ -18,8 +18,8 @@ makedepends=(
   perl
   python
   rust
-  rust-src
   rust-bindgen
+  rust-src
   tar
   xz
 
@@ -34,7 +34,6 @@ options=(
   !debug
   !strip
 )
-
 _srcname=linux-${pkgver%.*}
 _srctag=v${pkgver%.*}-${pkgver##*.}
 source=(
@@ -108,6 +107,7 @@ prepare() {
 build() {
   cd $_srcname
   make LLVM=1 all
+  make LLVM=1 -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
   make LLVM=1 htmldocs
 }
 
@@ -119,8 +119,9 @@ _package() {
     kmod
   )
   optdepends=(
-    'wireless-regdb: to set the correct wireless channels of your country'
     'linux-firmware: firmware images needed for some devices'
+    'scx-scheds: to use sched-ext schedulers'
+    'wireless-regdb: to set the correct wireless channels of your country'
   )
   provides=(
     KSMBD-MODULE
@@ -160,10 +161,11 @@ _package-headers() {
 
   echo "Installing build files..."
   install -Dt "$builddir" -m644 .config Makefile Module.symvers System.map \
-    localversion.* version vmlinux
+    localversion.* version vmlinux tools/bpf/bpftool/vmlinux.h
   install -Dt "$builddir/kernel" -m644 kernel/Makefile
   install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
   cp -t "$builddir" -a scripts
+  ln -srt "$builddir" "$builddir/scripts/gdb/vmlinux-gdb.py"
 
   # required when STACK_VALIDATION is enabled
   install -Dt "$builddir/tools/objtool" tools/objtool/objtool
