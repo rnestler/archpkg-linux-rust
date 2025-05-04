@@ -79,14 +79,6 @@ prepare() {
     patch -Np1 < "../$src"
   done
 
-  if rustup --help >/dev/null 2>&1; then
-    echo "Installing rust-src"
-    rustup component add rust-src
-  fi
-
-  echo "Verifying that Rust support is available"
-  make LLVM=1 rustavailable
-
   echo "Generating rust-toolchain"
   # We can't redirect it directly to the file, since otherwise the shell would
   # create it empty before the rustup rustc shim starts and then rustup would
@@ -94,6 +86,14 @@ prepare() {
   # else specify the desired toolchain properties in the file"
   rust_version=$(rustc --version | cut -d' ' -f 2)
   echo "$rust_version" > "$srcdir/rust-toolchain"
+
+  if rustup --help >/dev/null 2>&1; then
+    echo "Installing rust-src"
+    rustup component add rust-src
+  fi
+
+  echo "Verifying that Rust support is available"
+  make LLVM=1 rustavailable
 
   echo "Setting config..."
   cp ../config .config
