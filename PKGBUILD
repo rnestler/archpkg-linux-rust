@@ -1,7 +1,7 @@
 # Maintainer: Raphael Nestler (rnestler) <raphael.nestler@gmail.com>
 
 pkgbase=linux-rust
-pkgver=6.13.7.arch1
+pkgver=6.14.5.arch1
 pkgrel=1
 pkgdesc='Rust Linux'
 url='https://github.com/rnestler/archpkg-linux-rust'
@@ -47,16 +47,16 @@ validpgpkeys=(
   83BC8889351B5DEBBB68416EB8AC08600F108CDF  # Jan Alexander Steffens (heftig)
 )
 # https://www.kernel.org/pub/linux/kernel/v6.x/sha256sums.asc
-sha256sums=('3a39b62038b7ac2f43d26a1f84b4283e197804e1e817ad637e9a3d874c47801d'
+sha256sums=('28207ec52bbeaa3507010aeff944f442f7d9f22b286b79caf45ec6df1b24f409'
             'SKIP'
-            'b38f80cf02f9af621ba305ec9ccf992f9f238eb5668110b15cc0c049139f0cd6'
+            '0b49a5f7b6c24e1d80aa09150a2c9f59834bc6777cb7e60c5851b26f461acdf8'
             'SKIP'
-            '8c6237b87efa8377fe9f9f4eeb7077ae7ac6f57cea7e4cfefc1e96bb6d51b482')
-b2sums=('dc9e71842d7e9d2e016ca2c6e791d627790c87cd445b404c73745dc565eb89617ec69f1150b228d7853a595ea7f6daf6acdb74f8383088af30d42bb4c062a129'
+            '4ca29877b21c457320ecce66c971e3500d408b8c50227ce8991b2969a4f53fbf')
+b2sums=('872d0b8817c7e02b5e826238c3f548488d26c1d50bd334420ac2f4feb0cf5e1f11cac7f666982b2ccdc3c816aec428e4d57139080bb0510247e9631796bdab0a'
         'SKIP'
-        'f2a05a124d4f5dc105c959f5dceef962f867877d451c053b1ba7cca50829b961d74ac3631a5fe06ed0b79ee9388cf9c2f37cffdbd63ab2515e25a0be21a1c77e'
+        '441d8555e0a7331589800632f2dd66457f008d99be96f2a8fdf7a17a2858f9f8fa659e23d9fbdcc2de9cfd720c909d4795156d91206951ddeb316ad9deb3b1d5'
         'SKIP'
-        'd6c466bd217cbd8aabe263791a9e8c802e88a1cb25b8e76ee2303c13b81218fc01306ff26ba2bc38564fcb178072ce6cc14deb5b6ea8058dc33e8961080fcb16')
+        '217bb38ede057958c9df0ffafa0479ec0bfd0305a584d0f29270c88c3be469524a6f5f7ca31b54ccacbf1f6bb61dd87caf520ab09a2ce33bba31aa5ee874d1e1')
 
 export KBUILD_BUILD_HOST=archlinux
 export KBUILD_BUILD_USER=$pkgbase
@@ -79,14 +79,6 @@ prepare() {
     patch -Np1 < "../$src"
   done
 
-  if rustup --help >/dev/null 2>&1; then
-    echo "Installing rust-src"
-    rustup component add rust-src
-  fi
-
-  echo "Verifying that Rust support is available"
-  make LLVM=1 rustavailable
-
   echo "Generating rust-toolchain"
   # We can't redirect it directly to the file, since otherwise the shell would
   # create it empty before the rustup rustc shim starts and then rustup would
@@ -94,6 +86,14 @@ prepare() {
   # else specify the desired toolchain properties in the file"
   rust_version=$(rustc --version | cut -d' ' -f 2)
   echo "$rust_version" > "$srcdir/rust-toolchain"
+
+  if rustup --help >/dev/null 2>&1; then
+    echo "Installing rust-src"
+    rustup component add rust-src
+  fi
+
+  echo "Verifying that Rust support is available"
+  make LLVM=1 rustavailable
 
   echo "Setting config..."
   cp ../config .config
@@ -125,6 +125,7 @@ _package() {
   )
   provides=(
     KSMBD-MODULE
+    NTSYNC-MODULE
     VIRTUALBOX-GUEST-MODULES
     WIREGUARD-MODULE
   )
@@ -195,6 +196,15 @@ _package-headers() {
   echo "Installing KConfig files..."
   find . -name 'Kconfig*' -exec install -Dm644 {} "$builddir/{}" \;
 
+  echo "Installing Rust files..."
+  install -Dt "$builddir/rust" -m644 rust/*.rmeta
+  install -Dt "$builddir/rust" rust/*.so
+  install -Dt "$builddir" -m644 "$srcdir/rust-toolchain"
+
+  echo "Installing unstripped VDSO..."
+  make INSTALL_MOD_PATH="$pkgdir/usr" vdso_install \
+    link=  # Suppress build-id symlinks
+
   echo "Removing unneeded architectures..."
   local arch
   for arch in "$builddir"/arch/*/; do
@@ -211,13 +221,6 @@ _package-headers() {
 
   echo "Removing loose objects..."
   find "$builddir" -type f -name '*.o' -printf 'Removing %P\n' -delete
-
-  # Rust support
-  echo "Installing Rust files..."
-  install -Dt "$builddir/rust" -m644 scripts/target.json
-  install -Dt "$builddir/rust" -m644 rust/*.rmeta
-  install -Dt "$builddir/rust" -m644 rust/*.so
-  install -Dt "$builddir" -m644 "$srcdir/rust-toolchain"
 
   echo "Stripping build tools..."
   local file
